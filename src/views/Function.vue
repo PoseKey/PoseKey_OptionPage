@@ -21,7 +21,7 @@
             </v-card>
         </v-flex>
         <v-flex d-flex>
-            <v-card min-width="500">
+            <v-card min-width="640">
                 <v-card-title>
                     <h2>Default Model Setting</h2>
                 </v-card-title>
@@ -120,7 +120,7 @@ export default {
         customd:[],
         details: [],
         options: ['volume down','volume up', 'stop video','forward 10sec', 'backward 10sec', 'next video', 'scroll up', 'scroll down', 'previous slide', 'next slide','go to top','go to bottom', 'close tab', 'move tab left', 'move tab right', 'close window', 'zoom-in', 'zoom-out', 'zoom-reset', 'back', 'forward', 'reload',],
-        custom:false,//false
+        custom: false,//false
         defaults:[],
         customs:[],
         local: false//false
@@ -159,13 +159,11 @@ export default {
         }
     },
     mounted(){
-        
         let db = this.$db.requireDB();
         let uid = store.state.user.uid;
         db.collection('poses').onSnapshot(
             res=>{
                 const changes = res.docChanges();
-
                 changes.forEach(change =>{
                     if (change.type ==='added'){
                         this.details.push({

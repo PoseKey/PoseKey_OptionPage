@@ -34,6 +34,12 @@ export default {
         canvas = document.getElementById('output');
         ctx = canvas.getContext('2d');
         detectPose(video);
+
+        chrome.runtime.sendMessage(
+            {
+                data:"logout",
+            }
+        );
     },
     destroyed(){
         net.dispose();
