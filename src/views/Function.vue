@@ -13,7 +13,7 @@
                                 Activate Custom Model
                             </v-list-tile-title>
                             <v-list-tile-action>
-                                <v-switch v-model="custom"></v-switch>
+                                <v-switch v-model="custom" @click.native="toggle"></v-switch>
                             </v-list-tile-action>
                         </v-list-tile>
                     </v-list>
@@ -156,6 +156,20 @@ export default {
                 defaultsm: this.defaults,
                 customsm: this.customs
             });
+        },
+        toggle(){
+            let db = this.$db.requireDB();
+            let uid = store.state.user.uid;
+            if(this.custom){
+                db.collection('users').doc(uid).collection('model').doc('map').update({
+                    custom: true
+                });
+            }
+            else{
+                db.collection('users').doc(uid).collection('model').doc('map').update({
+                    custom: false
+                });
+            }
         }
     },
     mounted(){
@@ -180,9 +194,11 @@ export default {
                     this.defaults = doc.data().defaults;
                     this.customs = doc.data().customs;
                     this.customd = doc.data().customd;
+                    this.custom = doc.data().custom;
                 }
                 else{
                     db.collection('users').doc(uid).collection('model').doc('map').set({
+                        custom: false,
                         defaults:[null,null,null,null,null,null],
                         customs:[null,null,null,null,null,null],
                         customd:[
@@ -204,6 +220,7 @@ export default {
                         {Description:"Pose 5", id: 5},
                         {Description:"Pose 6", id: 6}
                     ];
+                    this.custom = false;
                 }
             }
         );

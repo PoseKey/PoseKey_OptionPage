@@ -12,60 +12,59 @@
                 </v-card-media>
             </v-card>
         </v-flex>
-        
-    <v-flex d-flex>
-        <v-card>
-            <v-card-title>
-            <h2>Custom Model</h2>
-            </v-card-title>
-            <v-divider></v-divider>
-            <v-window v-model="local">
-            <v-window-item :value="false">
-                <v-card-text width="300">
-                    <span>
-                        PoseKey encourages users to use Posekey in creative ways!<br>
-                        Therefore users can change default poses into their own unique poses by using a custom AI model.<br>
-                        Don't Worry, you only need to press few buttons to train your own AI model.<br>
-                        To create a <strong>custom model</strong>, please click the button below!<br>
-                        Default model can still be used that you can change the setting in popup page.<br>
-                        <br>
-                    </span>
-                <v-btn round color="secondary" @click="createModel()">Custom Model</v-btn>
-                </v-card-text>
-                <!-- <v-divider></v-divider>
-                <v-card-actions>
-                <v-btn color="primary">Custom Model</v-btn>
-                <v-switch v-model="toggle"></v-switch>
-                </v-card-actions> -->
-            </v-window-item>
-            <v-window-item :value="true">
-                <br>
-                <v-list subheader>
-                    <v-list-tile
-                        v-for="item in customd"
-                        :key="item.id"
-                        avatar
-                    >
-                        <v-list-tile-content>
-                            <v-form ref="form">
-                                <v-text-field
-                                v-model="item.Description"
-                                label="Describe your pose please"
-                                ></v-text-field>
-                            </v-form>
-                        </v-list-tile-content>
-                        <v-btn flat color="accent" @click="(event) => { clearClass(event, item.id) }">Clear</v-btn>
-                        <v-btn flat color="secondary" @mousedown="(event) => {trainClass(event, item.id)}" @mouseup="(event) => {trainClass(event, -1)}">Train</v-btn>
-                    </v-list-tile>
-                </v-list>
-                <v-card-actions style="justify-content:flex-end">
-                <div>
-                    <v-btn round outline dark color="accent" @click="save" style="margin-right:18px">Save</v-btn>
-                </div>
-                </v-card-actions>
-            </v-window-item>
-            </v-window>
-        </v-card>
+        <v-flex d-flex>
+      <v-card min-width="640">
+        <v-card-title>
+          <h2>Custom Model</h2>
+        </v-card-title>
+        <v-divider></v-divider>
+        <v-window v-model="local">
+          <v-window-item :value="false">
+            <v-card-text>
+              PoseKey encourages users to use Posekey in creative ways!<br>
+              Therefore users can change default poses into their own unique poses by using a custom AI model.<br>
+              Don't Worry, you only need to press few buttons to train your own AI model.<br>
+              To create a <strong>custom model</strong>, please click the button below!<br>
+              Default model can still be used that you can change the setting in popup page.<br>
+              <br>
+              <v-btn round color="secondary" @click="createModel()">Custom Model</v-btn>
+            </v-card-text>
+            <!-- <v-divider></v-divider>
+            <v-card-actions>
+              <v-btn color="primary">Custom Model</v-btn>
+              <v-switch v-model="toggle"></v-switch>
+            </v-card-actions> -->
+          </v-window-item>
+          <v-window-item :value="true">
+            <br>
+            <v-list subheader>
+              <!-- <v-subheader><strong class="primary--text">Customize model</strong></v-subheader> -->
+              
+              <v-list-tile
+                v-for="item in customd"
+                :key="item.id"
+                avatar
+              >
+                <v-list-tile-content>
+                  <v-form ref="form">
+                    <v-text-field
+                      v-model="item.Description"
+                      label="Describe your pose please"
+                    ></v-text-field>
+                  </v-form>
+                </v-list-tile-content>
+                <v-btn flat color="accent" @click="(event) => { clearClass(event, item.id) }">Clear</v-btn>
+                <v-btn flat color="secondary" @mousedown="(event) => {trainClass(event, item.id)}" @mouseup="(event) => {trainClass(event, -1)}">Train</v-btn>
+              </v-list-tile>
+            </v-list>
+            <v-card-actions style="justify-content:flex-end">
+              <div>
+                <v-btn round outline dark color="accent" @click="save" style="margin-right:18px">Save</v-btn>
+              </div>
+            </v-card-actions>
+          </v-window-item>
+        </v-window>
+      </v-card>
     </v-flex>
 
     </v-layout>
@@ -76,13 +75,13 @@ import Logout from '../components/Logout'
 
 import * as posenet from '@tensorflow-models/posenet';
 import * as utils from "../util";
+// import "@babel/polyfill";
 import * as mobilenetModule from '@tensorflow-models/mobilenet';
 import * as tf from '@tensorflow/tfjs';
 import * as knnClassifier from '@tensorflow-models/knn-classifier';
 
 import {mapState} from 'vuex'
 import store from '../store'
-
 
 let net;
 let knn;
@@ -106,10 +105,8 @@ export default {
         return{
             customd:[],
             details: [],
-            custom:false,//false
+            // custom:false,//false
             step: 1,
-            defaults:[],
-            customs:[],
             local: false//false
         }
     },
@@ -125,21 +122,18 @@ export default {
             training = index;
         },
         save () {
-            saveModel(this.userUid);
             let db = this.$db.requireDB();
             let uid = store.state.user.uid;
+            saveModel(uid);
             db.collection('users').doc(uid).collection('model').doc('map').update({
-            customd: this.customd
+                customd: this.customd
             });
-            // chrome.runtime.sendMessage(
-            //   {
-            //     data:"saveModel",
-            //     uidm: this.userUid
-            //   },
-            //   (response)=>{
-            //     console.log(response);
-            //   }
-            // );
+            chrome.runtime.sendMessage(
+                {
+                    data:"saveModel",
+                    uidm: uid
+                }
+            );
         },
         createModel(){
             this.local = true;
@@ -151,37 +145,37 @@ export default {
         let uid = store.state.user.uid;
         db.collection('users').doc(uid).collection('model').doc('map').get().then(
             (doc)=>{
-            if(doc.exists){
-                this.customd = doc.data().customd;
-            }
-            else{
-                db.collection('users').doc(uid).collection('model').doc('map').set({
-                defaults:[null,null,null,null,null,null],
-                customs:[null,null,null,null,null,null],
-                customd:[
-                    {Description:"Pose 1", id: 1},
-                    {Description:"Pose 2", id: 2},
-                    {Description:"Pose 3", id: 3},
-                    {Description:"Pose 4", id: 4},
-                    {Description:"Pose 5", id: 5},
-                    {Description:"Pose 6", id: 6}
-                ],
-                });
-                this.customd = [
-                {Description:"Pose 1", id: 1},
-                {Description:"Pose 2", id: 2},
-                {Description:"Pose 3", id: 3},
-                {Description:"Pose 4", id: 4},
-                {Description:"Pose 5",id: 5},
-                {Description:"Pose 6", id: 6}
-                ];
-            }
+                if(doc.exists){
+                    this.customd = doc.data().customd;
+                }
+                else{
+                    db.collection('users').doc(uid).collection('model').doc('map').set({
+                        custom: false,
+                        defaults:[null,null,null,null,null,null],
+                        customs:[null,null,null,null,null,null],
+                        customd:[
+                            {Description:"Pose 1", id: 1},
+                            {Description:"Pose 2", id: 2},
+                            {Description:"Pose 3", id: 3},
+                            {Description:"Pose 4", id: 4},
+                            {Description:"Pose 5", id: 5},
+                            {Description:"Pose 6", id: 6}
+                        ],
+                    });
+                    this.customd = [
+                        {Description:"Pose 1", id: 1},
+                        {Description:"Pose 2", id: 2},
+                        {Description:"Pose 3", id: 3},
+                        {Description:"Pose 4", id: 4},
+                        {Description:"Pose 5", id: 5},
+                        {Description:"Pose 6", id: 6}
+                    ];
+                }
             }
         );
         db.collection('poses').onSnapshot(
             res=>{
                 const changes = res.docChanges();
-
                 changes.forEach(change =>{
                 if (change.type ==='added'){
                     this.details.push({
@@ -193,30 +187,33 @@ export default {
             }
         );
         //loading canvas & model
-        try{
-            video = await loadVideo();
-        }
-        catch(e){
-            throw e;
-        }
-        canvas = document.getElementById('output');
-        ctx = canvas.getContext('2d');
-        net = await posenet.load(1.01);
-        knn = knnClassifier.create();
-        mobilenet = await mobilenetModule.load();
-        await loadModel();
-        detectPose(video,net);
         
         chrome.runtime.sendMessage(
             {
-            data:"login",
-            uidm: uid
+                data:"login",
+                uidm: uid
             },
-            (response)=>{
-            this.custom = response.customm;
-            this.local = response.localm;
+            async function (response){
+                // console.log(response);
+                this.local = response.localm;
+                // console.log(local);
+                try{
+                    video = await loadVideo();
+                }
+                catch(e){
+                    throw e;
+                }
+                canvas = document.getElementById('output');
+                ctx = canvas.getContext('2d');
+                net = await posenet.load(1.01);
+                knn = knnClassifier.create();
+                mobilenet = await mobilenetModule.load();
+                if(this.local) await loadMyModel(uid);
+                else await loadModel();
+                detectPose(video,net);
             }
         );
+
     },
     beforeDestroy(){
         net.dispose();
@@ -242,7 +239,7 @@ async function loadVideo(){
     video.srcObject = stream;
     video.play();
     return video;
-  }
+}
 
 function detectPose(video,net){
     async function detect(){
@@ -254,22 +251,22 @@ function detectPose(video,net){
         ctx.drawImage(video,0,0,width,height);
         ctx.restore();
         if (pose.score >= 0.1) {
-        utils.drawKeypoints(pose.keypoints, 0.3, ctx);
-        utils.drawSkeleton(pose.keypoints, 0.3, ctx);
+            utils.drawKeypoints(pose.keypoints, 0.3, ctx);
+            utils.drawSkeleton(pose.keypoints, 0.3, ctx);
         }
         const image = tf.fromPixels(canvas);
         tf.disableDeprecationWarnings();
         let logits;
         const infer = () => mobilenet.infer(image, 'conv_preds');
         if (training != -1) {
-        logits = infer();
-        knn.addExample(logits, training);
-        const exampleCount = knn.getClassExampleCount();
-        console.log(exampleCount[training]);
+            logits = infer();
+            knn.addExample(logits, training);
+            const exampleCount = knn.getClassExampleCount();
+            console.log(exampleCount[training]);
         }
         image.dispose();
         if (logits != null) {
-        logits.dispose();
+            logits.dispose();
         }
         requestAnimationFrame(detect);
     }
@@ -306,13 +303,13 @@ async function defineClassifierModel(myPassedClassifier){
     return myClassifierModel;
 }
 
-  async function saveModel(uid){
+async function saveModel(uid){
     const myClassifierModel2 = await defineClassifierModel(knn);
     myClassifierModel2.save('indexeddb://'+ uid);
     console.log('Classifier saved');
-  }
+}
 
-  async function loadModel(){
+async function loadModel(){
     const myLoadedModel  = await tf.loadModel('https://ujoy7851.github.io/Capstone/model/model.json');
     // const myLoadedModel  = await tf.loadModel('indexeddb://model');
 
@@ -325,8 +322,23 @@ async function defineClassifierModel(myPassedClassifier){
     }
     knn.dispose()
     knn.setClassifierDataset(myIncomingClassifier);
-    console.log('Classifier loaded');
-  }
+    // console.log('Classifier loaded');
+}
+  
+async function loadMyModel(uid){
+    const myLoadedModel  = await tf.loadModel('indexeddb://' + uid);
+
+    const myMaxLayers = myLoadedModel.layers.length;
+    const myDenseEnd =  myMaxLayers - 2;
+    const myDenseStart = myDenseEnd/2;                                  
+    for (let myWeightLoop = myDenseStart; myWeightLoop < myDenseEnd; myWeightLoop++ ){
+        myIncomingClassifier[myWeightLoop - myDenseStart] = myLoadedModel.layers[myWeightLoop].getWeights()[0];
+        myGroups[myWeightLoop - myDenseStart] = myLoadedModel.layers[myWeightLoop].name 
+    }
+    knn.dispose()
+    knn.setClassifierDataset(myIncomingClassifier);
+    // console.log('Classifier loaded');
+}
 
 </script>
 
