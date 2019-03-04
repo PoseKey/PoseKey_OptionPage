@@ -19,7 +19,7 @@
         </v-card-title>
         <v-divider></v-divider>
         <v-window v-model="local">
-          <v-window-item :value="false">
+          <v-window-item :value="0">
             <v-card-text>
               PoseKey encourages users to use Posekey in creative ways!<br>
               Therefore users can change default poses into their own unique poses by using a custom AI model.<br>
@@ -35,7 +35,7 @@
               <v-switch v-model="toggle"></v-switch>
             </v-card-actions> -->
           </v-window-item>
-          <v-window-item :value="true">
+          <v-window-item :value="1">
             <br>
             <v-list subheader>
               <!-- <v-subheader><strong class="primary--text">Customize model</strong></v-subheader> -->
@@ -102,12 +102,12 @@ export default {
         Logout
     },
     data(){
-        return{
+        return {
             customd:[],
             details: [],
             // custom:false,//false
             step: 1,
-            local: false//false
+            local: 1//false
         }
     },
     methods: {
@@ -136,7 +136,7 @@ export default {
             );
         },
         createModel(){
-            this.local = true;
+            this.local = 1;
         },
     },
     async mounted(){
@@ -177,43 +177,29 @@ export default {
             res=>{
                 const changes = res.docChanges();
                 changes.forEach(change =>{
-                if (change.type ==='added'){
-                    this.details.push({
-                    ...change.doc.data(),
-                    id: change.doc.id
-                    })
-                }
+                    if (change.type ==='added'){
+                        this.details.push({
+                        ...change.doc.data(),
+                        id: change.doc.id
+                        })
+                    }
                 });
             }
         );
         //loading canvas & model
-        
         chrome.runtime.sendMessage(
             {
                 data:"login",
                 uidm: uid
             },
-            async function (response){
-                // console.log(response);
-                this.local = response.localm;
+            (response) => {
+                console.log(response);
+                if (response.localm == 0) this.local = 0;
+                else this.local = 1;
                 // console.log(local);
-                try{
-                    video = await loadVideo();
-                }
-                catch(e){
-                    throw e;
-                }
-                canvas = document.getElementById('output');
-                ctx = canvas.getContext('2d');
-                net = await posenet.load(1.01);
-                knn = knnClassifier.create();
-                mobilenet = await mobilenetModule.load();
-                if(this.local) await loadMyModel(uid);
-                else await loadModel();
-                detectPose(video,net);
+                setup(this.local);
             }
         );
-
     },
     beforeDestroy(){
         net.dispose();
@@ -226,6 +212,22 @@ export default {
     }
 }
 
+async function setup(loc){
+    try{
+        video = await loadVideo();
+    }
+    catch(e){
+        throw e;
+    }
+    canvas = document.getElementById('output');
+    ctx = canvas.getContext('2d');
+    net = await posenet.load(1.01);
+    knn = knnClassifier.create();
+    mobilenet = await mobilenetModule.load();
+    if(loc == 1) await loadMyModel(uid);
+    else await loadModel();
+    detectPose(video,net);
+}
 
 async function loadVideo(){
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -273,7 +275,7 @@ function detectPose(video,net){
     detect();
 }
 
-  //save and load model
+//save and load model
 async function defineClassifierModel(myPassedClassifier){
     let myLayerList = [];
     myLayerList[0] = [];    // for the input layer name as a string

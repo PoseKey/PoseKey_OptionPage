@@ -134,11 +134,11 @@ export default {
             });
             chrome.runtime.sendMessage(
                 {
-                data:"setting",
-                pmm: this.pm,
-                scm: this.sc,
-                fqm: this.fq,
-                acm: this.ac
+                    data:"setting",
+                    pmm: this.pm,
+                    scm: this.sc,
+                    fqm: this.fq,
+                    acm: this.ac
                 }
             );
         }
@@ -157,22 +157,34 @@ export default {
         let db = this.$db.requireDB();
         let uid = store.state.user.uid;
         db.collection('users').doc(uid).collection('model').doc('setting').get().then(
-        (data)=>{
-            if(data.exists){
-                this.pm = data.data().pm;
-                this.sc = data.data().sc;
-                this.fq = data.data().fq;
-                this.ac = data.data().ac;
+            (data)=>{
+                if(data.exists){
+                    this.pm = data.data().pm;
+                    this.sc = data.data().sc;
+                    this.fq = data.data().fq;
+                    this.ac = data.data().ac;
+                }
+                else{
+                    db.collection('users').doc(uid).collection('model').doc('setting').set({
+                        pm: this.pm,
+                        sc: this.sc,
+                        fq: this.fq,
+                        ac: this.ac,
+                    })
+                }
             }
-            else{
-                db.collection('users').doc(uid).collection('model').doc('setting').set({
-                    pm: this.pm,
-                    sc: this.sc,
-                    fq: this.fq,
-                    ac: this.ac,
-                })
+        );
+        
+        chrome.runtime.sendMessage(
+            {
+                data:"login",
+                uidm: uid
+            },
+            (response)=>{
+                console.log(response);
+                this.local = response.localm;
+                this.custom = response.customm;
             }
-        }
         );
     }
 }
