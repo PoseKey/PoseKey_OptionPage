@@ -23,7 +23,7 @@
             <v-card-text>
               PoseKey encourages users to use Posekey in creative ways!<br>
               Therefore users can change default poses into their own unique poses by using a custom AI model.<br>
-              Don't Worry, you only need to press few buttons to train your own AI model.<br>
+              You only need to press few buttons to train your own AI model.<br>
               To create a <strong>custom model</strong>, please click the button below!<br>
               Default model can still be used that you can change the setting in popup page.<br>
               <br>

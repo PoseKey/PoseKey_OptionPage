@@ -95,12 +95,11 @@
                 </v-card-text>
                 <v-card-text v-show="!local">
                     You have not created your own <strong>Custom model</strong>!<br>
-                    PoseKey supports users to make their own unique poses that could be mapped with each functions! <br>
-                    You can define your own poses in the <strong>Custom Model</strong> settings. <br>
+                    PoseKey encourage users to make their own unique poses that could be mapped with each functions! <br>
+                    First, you should create a custom model in the <strong>Model</strong> section(tab). <br>
                     After you create your own model, you can than connect your poses to trigger web browsing functions.<br>
-                    However, you can change the mapped functions anytime at popup page!
+                    You also can change the mapped functions anytime at popup page!
                     <br>
-                    Click the <strong>CUSTOM MODEL</strong> button in custom model card!
                 </v-card-text>
             </v-card>
         </v-flex>
