@@ -53,8 +53,9 @@
                     ></v-text-field>
                   </v-form>
                 </v-list-tile-content>
-                <v-btn flat color="accent" @click="(event) => { clearClass(event, item.id) }">Clear</v-btn>
-                <v-btn flat color="secondary" @mousedown="(event) => {trainClass(event, item.id)}" @mouseup="(event) => {trainClass(event, -1)}">Train</v-btn>
+                <span color="secondary">Example Count: {{item.count}}</span>
+                <v-btn flat color="accent" @click="(event) => { clearClass(event, item.id-1) }">Clear</v-btn>
+                <v-btn flat color="secondary" @mousedown="(event) => {trainClass(event, item.id-1)}" @mouseup="(event) => {trainClass(event, -1);updateCount(item.id-1);}">Train</v-btn>
               </v-list-tile>
             </v-list>
             <v-card-actions style="justify-content:flex-end">
@@ -114,12 +115,16 @@ export default {
         clearClass (event, index) {
             // console.log("clear" + index);
             knn.clearClass(index);
-            const exampleCount = knn.getClassExampleCount();
-            console.log(exampleCount[index]);
+            this.customd[index].count = 0;
         },
         trainClass (event, index) {
             // console.log("train" + index);
             training = index;
+        },
+        updateCount (index) {
+            const exampleCount = knn.getClassExampleCount();
+            this.customd[index].count = exampleCount[index];
+            console.log(this.customd[index].count);
         },
         save () {
             let db = this.$db.requireDB();
@@ -154,21 +159,21 @@ export default {
                         defaults:[null,null,null,null,null,null],
                         customs:[null,null,null,null,null,null],
                         customd:[
-                            {Description:"Pose 1", id: 1},
-                            {Description:"Pose 2", id: 2},
-                            {Description:"Pose 3", id: 3},
-                            {Description:"Pose 4", id: 4},
-                            {Description:"Pose 5", id: 5},
-                            {Description:"Pose 6", id: 6}
+                            {Description:"Pose 1", id: 1, count: 0},
+                            {Description:"Pose 2", id: 2, count: 0},
+                            {Description:"Pose 3", id: 3, count: 0},
+                            {Description:"Pose 4", id: 4, count: 0},
+                            {Description:"Pose 5", id: 5, count: 0},
+                            {Description:"Pose 6", id: 6, count: 0}
                         ],
-                    });
-                    this.customd = [
-                        {Description:"Pose 1", id: 1},
-                        {Description:"Pose 2", id: 2},
-                        {Description:"Pose 3", id: 3},
-                        {Description:"Pose 4", id: 4},
-                        {Description:"Pose 5", id: 5},
-                        {Description:"Pose 6", id: 6}
+                        });
+                        this.customd = [
+                        {Description:"Pose 1", id: 1, count: 0},
+                        {Description:"Pose 2", id: 2, count: 0},
+                        {Description:"Pose 3", id: 3, count: 0},
+                        {Description:"Pose 4", id: 4, count: 0},
+                        {Description:"Pose 5", id: 5, count: 0},
+                        {Description:"Pose 6", id: 6, count: 0}
                     ];
                 }
             }
@@ -197,9 +202,31 @@ export default {
                 if (response.localm == 0) this.local = 0;
                 else this.local = 1;
                 // console.log(local);
-                setup(this.local);
+                // setup(this.local);
             }
         );
+
+        //setup
+        try{
+            video = await loadVideo();
+        }
+        catch(e){
+            throw e;
+        }
+        canvas = document.getElementById('output');
+        ctx = canvas.getContext('2d');
+        net = await posenet.load(1.01);
+        knn = knnClassifier.create();
+        mobilenet = await mobilenetModule.load();
+        if(this.local == 1) await loadMyModel(uid);
+        else await loadModel();
+        detectPose(video,net);
+
+        for(let i=0; i<6; i++){
+            const count = knn.getClassExampleCount();
+            this.customd[i].count = count[i];
+        }
+
     },
     beforeDestroy(){
         net.dispose();
@@ -212,22 +239,22 @@ export default {
     }
 }
 
-async function setup(loc){
-    try{
-        video = await loadVideo();
-    }
-    catch(e){
-        throw e;
-    }
-    canvas = document.getElementById('output');
-    ctx = canvas.getContext('2d');
-    net = await posenet.load(1.01);
-    knn = knnClassifier.create();
-    mobilenet = await mobilenetModule.load();
-    if(loc == 1) await loadMyModel(uid);
-    else await loadModel();
-    detectPose(video,net);
-}
+// async function setup(loc){
+//     try{
+//         video = await loadVideo();
+//     }
+//     catch(e){
+//         throw e;
+//     }
+//     canvas = document.getElementById('output');
+//     ctx = canvas.getContext('2d');
+//     net = await posenet.load(1.01);
+//     knn = knnClassifier.create();
+//     mobilenet = await mobilenetModule.load();
+//     if(loc == 1) await loadMyModel(uid);
+//     else await loadModel();
+//     detectPose(video,net);
+// }
 
 async function loadVideo(){
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
