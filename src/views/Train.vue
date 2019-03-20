@@ -133,12 +133,12 @@ export default {
             db.collection('users').doc(uid).collection('model').doc('map').update({
                 customd: this.customd
             });
-            chrome.runtime.sendMessage(
-                {
-                    data:"saveModel",
-                    uidm: uid
-                }
-            );
+            // chrome.runtime.sendMessage(
+            //     {
+            //         data:"saveModel",
+            //         uidm: uid
+            //     }
+            // );
         },
         createModel(){
             this.local = 1;
@@ -192,19 +192,19 @@ export default {
             }
         );
         //loading canvas & model
-        chrome.runtime.sendMessage(
-            {
-                data:"login",
-                uidm: uid
-            },
-            (response) => {
-                console.log(response);
-                if (response.localm == 0) this.local = 0;
-                else this.local = 1;
-                // console.log(local);
-                // setup(this.local);
-            }
-        );
+        // chrome.runtime.sendMessage(
+        //     {
+        //         data:"login",
+        //         uidm: uid
+        //     },
+        //     (response) => {
+        //         console.log(response);
+        //         if (response.localm == 0) this.local = 0;
+        //         else this.local = 1;
+        //         // console.log(local);
+        //         // setup(this.local);
+        //     }
+        // );
 
         //setup
         try{
@@ -366,7 +366,7 @@ async function loadMyModel(uid){
     }
     knn.dispose()
     knn.setClassifierDataset(myIncomingClassifier);
-    // console.log('Classifier loaded');
+    console.log('Classifier loaded');
 }
 
 </script>
