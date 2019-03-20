@@ -15,6 +15,16 @@
                         accuracy: 0.6
                     </span>
                     </v-tooltip>
+                    <v-spacer></v-spacer>
+                    <v-tooltip right>
+                        <template #activator="data">
+                            <v-icon v-on="data.on" color="primary">help</v-icon>
+                        </template>
+                        <span>
+                            어쩌구 저쩌구<br>
+                            br태크는 줄바꿈
+                        </span>
+                    </v-tooltip>
                 </v-card-title>
                 <v-divider></v-divider>
                 <v-card-text>
@@ -87,7 +97,17 @@
         <v-flex d-flex>
             <v-card min-width="640">
                 <v-card-title>
-                <h2>Credits</h2>
+                    <h2>Credits</h2>
+                    <v-spacer></v-spacer>
+                    <v-tooltip right>
+                        <template #activator="data">
+                            <v-icon v-on="data.on" color="primary">help</v-icon>
+                        </template>
+                        <span>
+                            어쩌구 저쩌구<br>
+                            br태크는 줄바꿈
+                        </span>
+                    </v-tooltip>
                 </v-card-title>
                 <v-divider></v-divider>
                 <v-card-text>

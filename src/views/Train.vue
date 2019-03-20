@@ -5,6 +5,16 @@
            <v-card min-width="640">
                 <v-card-title>
                     <h2>Mirror</h2>
+                    <v-spacer></v-spacer>
+                    <v-tooltip right>
+                        <template #activator="data">
+                            <v-icon v-on="data.on" color="primary">help</v-icon>
+                        </template>
+                        <span>
+                            어쩌구 저쩌구<br>
+                            br태크는 줄바꿈
+                        </span>
+                    </v-tooltip>
                 </v-card-title>
                 <v-divider></v-divider>
                 <v-card-media>
@@ -16,6 +26,16 @@
       <v-card min-width="640">
         <v-card-title>
           <h2>Custom Model</h2>
+          <v-spacer></v-spacer>
+          <v-tooltip right>
+                <template #activator="data">
+                    <v-icon v-on="data.on" color="primary">help</v-icon>
+                </template>
+                <span>
+                    어쩌구 저쩌구<br>
+                    br태크는 줄바꿈
+                </span>
+            </v-tooltip>
         </v-card-title>
         <v-divider></v-divider>
         <v-window v-model="local">
