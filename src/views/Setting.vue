@@ -21,8 +21,13 @@
                             <v-icon v-on="data.on" color="primary">help</v-icon>
                         </template>
                         <span>
-                            어쩌구 저쩌구<br>
-                            br태크는 줄바꿈
+                            Setting Tab provides configuration options for the AI model running in your web browser.<br>
+                            Recommended Settings are as followed:<br>
+                            posenet model: 0.75 <br>
+                            image scale: 0.4 <br>
+                            frequency: 0.5 <br>
+                            accuracy: 0.6<br><br>
+                            However, if your device lags too much, you should try lowering the function.<br>
                         </span>
                     </v-tooltip>
                 </v-card-title>
@@ -104,8 +109,7 @@
                             <v-icon v-on="data.on" color="primary">help</v-icon>
                         </template>
                         <span>
-                            어쩌구 저쩌구<br>
-                            br태크는 줄바꿈
+                            Copyrights, Credits, and Special thanks
                         </span>
                     </v-tooltip>
                 </v-card-title>
