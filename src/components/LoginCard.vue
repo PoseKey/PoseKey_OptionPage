@@ -46,9 +46,9 @@ export default {
         }
     },
     mounted (){
-        // chrome.runtime.sendMessage({
-        //     data:"logout"
-        // });
+        chrome.runtime.sendMessage({
+            data:"logout"
+        });
     }
 }
 </script>

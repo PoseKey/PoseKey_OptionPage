@@ -144,16 +144,16 @@ export default {
         }
     },
     mounted (){
-        // chrome.runtime.sendMessage(
-        //   {data:"?"},
-        //   (response)=>{
-        //     console.log(response);
-        //     this.pm = response.pmm;
-        //     this.sc = response.scm;
-        //     this.fq = response.fqm;
-        //     this.ac = response.acm;
-        //   }
-        // )
+        chrome.runtime.sendMessage(
+          {data:"?"},
+          (response)=>{
+            console.log(response);
+            this.pm = response.pmm;
+            this.sc = response.scm;
+            this.fq = response.fqm;
+            this.ac = response.acm;
+          }
+        );
         let db = this.$db.requireDB();
         let uid = store.state.user.uid;
         db.collection('users').doc(uid).collection('model').doc('setting').get().then(
