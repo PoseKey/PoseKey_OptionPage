@@ -11,8 +11,13 @@
                             <v-icon v-on="data.on" color="primary">help</v-icon>
                         </template>
                         <span>
-                            어쩌구 저쩌구<br>
-                            br태크는 줄바꿈
+                            Mirror 탭에서 당신이 잘 찍히고 있는지 확인하세요!
+                            <br>
+                            얼굴과 팔을 포함한 상반신이 다 합니다. 화면을 보며 적당한 거리로 이동해 주세요.
+                            
+                            Make sure you are well taken on the Mirror tab!
+                            <br>
+                            The upper body including the face and arms should be seen. Please look at the screen and move to the proper distance.
                         </span>
                     </v-tooltip>
                 </v-card-title>
@@ -32,8 +37,20 @@
                     <v-icon v-on="data.on" color="primary">help</v-icon>
                 </template>
                 <span>
-                    어쩌구 저쩌구<br>
-                    br태크는 줄바꿈
+                    이곳에서 나만의 모델을 학습시킬 수 있습니다.<br>
+                    새로 학습시킬 포즈를 정하고 "CLEAR"를 눌러주세요.<br>
+                    Mirror를 보고 적당한 거리에 서서 원하는 포즈를 취하고 'TRAIN'을 10초이상 눌러주세요.
+                    Example Count가 100 이상이 될 때까지 학습시켜 주세요.<br>
+                    다른 포즈들과 비슷한 포즈로 학습하면 인식률이 떨어지니 주의하세요.
+                    'SAVE'를 눌러야 학습이 완료됩니다.
+                    'RESET'을 누르면 모델이 초기화됩니다.
+
+                    Here you can train your own model.<br>
+                    Set a new pose and press "CLEAR".<br>
+                    Look at Mirror tab and stand at the right distance, take your pose and press "TRAIN" for more than 10 seconds.
+                    Please study until the Example Count reaches 100 or more.<br>
+                    Be aware that training with a pose that is similar to other poses will result in lower recognition rates. You must press 'SAVE' to complete the learning.
+                    Press 'RESET' to initialize the model.
                 </span>
             </v-tooltip>
         </v-card-title>
@@ -81,6 +98,7 @@
             <v-card-actions style="justify-content:flex-end">
               <div>
                 <v-btn round outline dark color="accent" @click="save" style="margin-right:18px">Save</v-btn>
+                <v-btn round outline dark color="accent" @click="reset" style="margin-right:18px">Reset</v-btn>
               </div>
             </v-card-actions>
           </v-window-item>
@@ -95,7 +113,7 @@
 import Logout from '../components/Logout'
 
 import * as posenet from '@tensorflow-models/posenet';
-import * as utils from "../util";
+import * as utils from '../util';
 // import "@babel/polyfill";
 import * as mobilenetModule from '@tensorflow-models/mobilenet';
 import * as tf from '@tensorflow/tfjs';
@@ -159,6 +177,19 @@ export default {
                     uidm: uid
                 }
             );
+        },
+        async reset () {
+            let db = this.$db.requireDB();
+            let uid = store.state.user.uid;
+            knn = knnClassifier.create();
+            await loadModel();
+            await saveModel(uid);
+            for(let i=0; i<6; i++){
+                this.updateCount(i);
+            }
+            db.collection('users').doc(uid).collection('model').doc('map').update({
+                    customd: this.customd
+            });
         },
         createModel(){
             this.local = 1;
@@ -369,9 +400,9 @@ async function loadModel(){
         myIncomingClassifier[myWeightLoop - myDenseStart] = myLoadedModel.layers[myWeightLoop].getWeights()[0];
         myGroups[myWeightLoop - myDenseStart] = myLoadedModel.layers[myWeightLoop].name 
     }
-    knn.dispose()
+    knn.dispose();
     knn.setClassifierDataset(myIncomingClassifier);
-    // console.log('Classifier loaded');
+    console.log('Classifier loaded');
 }
   
 async function loadMyModel(uid){
@@ -384,7 +415,7 @@ async function loadMyModel(uid){
         myIncomingClassifier[myWeightLoop - myDenseStart] = myLoadedModel.layers[myWeightLoop].getWeights()[0];
         myGroups[myWeightLoop - myDenseStart] = myLoadedModel.layers[myWeightLoop].name 
     }
-    knn.dispose()
+    knn.dispose();
     knn.setClassifierDataset(myIncomingClassifier);
     console.log('Classifier loaded');
 }
