@@ -35,9 +35,10 @@
                 <span>
                     Here you can train your own model.<br>
                     Set a new pose and press "CLEAR".<br>
-                    Look at Mirror tab and stand at the right distance, take your pose and press "TRAIN" for more than 10 seconds.
+                    Look at Mirror tab and stand at the right distance, take your pose and press "TRAIN" for more than 10 seconds.<br>
                     Please study until the Example Count reaches 100 or more.<br>
-                    Be aware that training with a pose that is similar to other poses will result in lower recognition rates. You must press 'SAVE' to complete the learning.
+                    Be aware that training with a pose that is similar to other poses will result in lower recognition rates.<br>
+                    You must press 'SAVE' to complete the learning.<br>
                     Press 'RESET' to initialize the model.
                 </span>
             </v-tooltip>
