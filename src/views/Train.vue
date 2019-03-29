@@ -18,9 +18,9 @@
                     </v-tooltip>
                 </v-card-title>
                 <v-divider></v-divider>
-                <v-card-media>
+                <v-card-responsive>
                     <canvas id="output" width="640" height="480"></canvas>
-                </v-card-media>
+                </v-card-responsive>
             </v-card>
         </v-flex>
         <v-flex d-flex>
@@ -34,12 +34,13 @@
                 </template>
                 <span>
                     Here you can train your own model.<br>
-                    Set a new pose and press "CLEAR".<br>
-                    Look at Mirror tab and stand at the right distance, take your pose and press "TRAIN" for more than 10 seconds.<br>
-                    Please study until the Example Count reaches 100 or more.<br>
+                    If this is your first time, the default model will be copied to your custom model<br>
+                    To change the pose, first, press "Clear" to reset the selected pose<br>
+                    Then look at the Mirror tab and take your own pose and press "TRAIN". You should press the button for more than 10 seconds.<br>
+                    Please train the model until the Example Count reaches more than 100<br>
                     Be aware that training with a pose that is similar to other poses will result in lower recognition rates.<br>
-                    You must press 'SAVE' to complete the learning.<br>
-                    Press 'RESET' to initialize the model.
+                    You must press 'SAVE' to complete the learning process and save the model.<br>
+                    You also can press 'RESET' to erase your model and copy the default model.
                 </span>
             </v-tooltip>
         </v-card-title>
@@ -323,7 +324,7 @@ function detectPose(video,net){
             utils.drawKeypoints(pose.keypoints, 0.3, ctx);
             utils.drawSkeleton(pose.keypoints, 0.3, ctx);
         }
-        const image = tf.fromPixels(canvas);
+        const image = tf.browser.fromPixels(canvas);
         tf.disableDeprecationWarnings();
         let logits;
         const infer = () => mobilenet.infer(image, 'conv_preds');
@@ -331,7 +332,7 @@ function detectPose(video,net){
             logits = infer();
             knn.addExample(logits, training);
             const exampleCount = knn.getClassExampleCount();
-            console.log(exampleCount[training]);
+            // console.log(exampleCount[training]);
         }
         image.dispose();
         if (logits != null) {
@@ -375,11 +376,12 @@ async function defineClassifierModel(myPassedClassifier){
 async function saveModel(uid){
     const myClassifierModel2 = await defineClassifierModel(knn);
     myClassifierModel2.save('indexeddb://'+ uid);
-    console.log('Classifier saved');
+    // console.log('Classifier saved');
 }
 
 async function loadModel(){
-    const myLoadedModel  = await tf.loadModel('https://ujoy7851.github.io/Capstone/model/model.json');
+    const myLoadedModel  = await tf.loadLayersModel('https://ujoy7851.github.io/Capstone/model/model.json');
+    // const myLoadedModel  = await tf.loadModel('https://ujoy7851.github.io/Capstone/model/model.json');
     // const myLoadedModel  = await tf.loadModel('indexeddb://model');
 
     const myMaxLayers = myLoadedModel.layers.length;
@@ -391,11 +393,12 @@ async function loadModel(){
     }
     knn.dispose();
     knn.setClassifierDataset(myIncomingClassifier);
-    console.log('Classifier loaded');
+    // console.log('Classifier loaded');
 }
   
 async function loadMyModel(uid){
-    const myLoadedModel  = await tf.loadModel('indexeddb://' + uid);
+    const myLoadedModel  = await tf.loadLayersModel('indexeddb://' + uid);
+    // const myLoadedModel  = await tf.loadModel('indexeddb://' + uid);
 
     const myMaxLayers = myLoadedModel.layers.length;
     const myDenseEnd =  myMaxLayers - 2;
@@ -406,7 +409,7 @@ async function loadMyModel(uid){
     }
     knn.dispose();
     knn.setClassifierDataset(myIncomingClassifier);
-    console.log('Classifier loaded');
+    // console.log('Classifier loaded');
 }
 
 </script>

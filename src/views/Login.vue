@@ -42,7 +42,7 @@ export default {
         );
     },
     destroyed(){
-        net.dispose();
+        if(net) net.dispose();
         video.pause();
         video.srcObject = null;
         stream.getTracks().forEach((track) => {

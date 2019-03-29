@@ -11,8 +11,7 @@
                             <v-icon v-on="data.on" color="primary">help</v-icon>
                         </template>
                         <span>
-                            어쩌구 저쩌구<br>
-                            br태크는 줄바꿈
+                            You can use your own trained model.
                         </span>
                     </v-tooltip>
                 </v-card-title>
@@ -34,6 +33,16 @@
             <v-card min-width="640">
                 <v-card-title>
                     <h2>Default Model Setting</h2>
+                     <v-spacer></v-spacer>
+                    <v-tooltip right>
+                        <template #activator="data">
+                            <v-icon v-on="data.on" color="primary">help</v-icon>
+                        </template>
+                        <span>
+                            You can match the functions of the browser you want with the pose of the default AI model. <br>
+                            Set the function you want with the given poses on the left.
+                        </span>
+                    </v-tooltip>
                 </v-card-title>
                 <v-card-text>
                     <v-list>
@@ -70,9 +79,20 @@
             </v-card>
         </v-flex>
         <v-flex d-flex>
-            <v-card>
+            <v-card min-width="640" min-height="470">
                 <v-card-title>
                     <h2>Custom Model Setting</h2>
+                    <v-spacer></v-spacer>
+                    <v-tooltip right>
+                        <template #activator="data">
+                            <v-icon v-on="data.on" color="primary">help</v-icon>
+                        </template>
+                        <span>
+                            You can match the function with your own custom trained model.<br>
+                            If you haven't created your own model, use the default model or click the 'OPTION PAGE' button below.<br>
+                            You can create a custom model in the option page.
+                        </span>
+                    </v-tooltip>
                 </v-card-title>
                 <v-card-text v-show="local">
                     <v-list>
@@ -110,7 +130,15 @@
                     After you create your own model, you can than connect your poses to trigger web browsing functions.<br>
                     You also can change the mapped functions anytime at popup page!
                     <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <v-divider></v-divider>
+                    <br>
                 </v-card-text>
+                    <v-btn to="/">Create Model!</v-btn>
             </v-card>
         </v-flex>
     </v-layout>
