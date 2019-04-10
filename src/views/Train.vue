@@ -54,7 +54,7 @@
               To create a <strong>custom model</strong>, please click the button below!<br>
               Default model can still be used that you can change the setting in popup page.<br>
               <br>
-              <v-btn round color="secondary" @click="createModel()">Custom Model</v-btn>
+              <v-btn round color="primary" @click="createModel()">Custom Model</v-btn>
             </v-card-text>
             <!-- <v-divider></v-divider>
             <v-card-actions>
