@@ -133,12 +133,11 @@
                     <br>
                     <br>
                     <br>
-                    <br>
-                    <br>
-                    <v-divider></v-divider>
-                    <br>
+                    <v-btn
+                    color="primary"
+                    round
+                    to="/">Create Model!</v-btn>
                 </v-card-text>
-                    <v-btn to="/">Create Model!</v-btn>
             </v-card>
         </v-flex>
     </v-layout>
