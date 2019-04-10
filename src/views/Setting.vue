@@ -166,8 +166,8 @@
                         label="Interface ON/OFF"
                         @change="interfaceIO()">
                         </v-checkbox>
-                        <canvas id="cvs" style="width:250px">
-                        </canvas>
+                        <h5>Color Preview</h5>
+                        <canvas id="cvs" style="width:250px"/>
                     </v-container>
                     </div>
                 </v-card-text>

@@ -207,8 +207,8 @@ export default {
                             {Description:"Pose 5", id: 5, count: 0},
                             {Description:"Pose 6", id: 6, count: 0}
                         ],
-                        });
-                        this.customd = [
+                    });
+                    this.customd = [
                         {Description:"Pose 1", id: 1, count: 0},
                         {Description:"Pose 2", id: 2, count: 0},
                         {Description:"Pose 3", id: 3, count: 0},
