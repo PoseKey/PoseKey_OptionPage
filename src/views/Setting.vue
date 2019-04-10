@@ -1,8 +1,8 @@
 <template>
     <v-layout row wrap>
         <Logout/>
-        <v-flex d-flex>
-            <v-card min-width="640">
+        <v-flex d-flex style="padding:5px">
+            <v-card min-width="640" hover>
                 <v-card-title>
                     <h2>AI Model Setting</h2>
                     <v-spacer></v-spacer>
@@ -89,8 +89,8 @@
                 </v-card-text>
             </v-card>
         </v-flex>
-        <v-flex d-flex>
-            <v-card min-width="640">
+        <v-flex d-flex style="padding:5px">
+            <v-card min-width="640" hover>
                 <v-card-title>
                     <h2>Interface Setting</h2>
                     <v-spacer></v-spacer>
@@ -173,8 +173,8 @@
                 </v-card-text>
                 </v-card>
         </v-flex>
-        <v-flex d-flex>
-            <v-card min-width="640">
+        <v-flex d-flex style="padding:5px">
+            <v-card min-width="640" hover>
                 <v-card-title>
                     <h2>Credits</h2>
                     <v-spacer></v-spacer>

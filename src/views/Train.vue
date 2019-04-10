@@ -1,8 +1,8 @@
 <template>
     <v-layout row wrap>
         <Logout/>
-        <v-flex>
-           <v-card min-width="640">
+        <v-flex style="padding:5px">
+           <v-card min-width="640" hover>
                 <v-card-title>
                     <h2>Mirror</h2>
                     <v-spacer></v-spacer>
@@ -23,8 +23,8 @@
                 </v-card-responsive>
             </v-card>
         </v-flex>
-        <v-flex d-flex>
-      <v-card min-width="640">
+        <v-flex d-flex style="padding:5px">
+      <v-card min-width="640" hover>
         <v-card-title>
           <h2>Custom Model</h2>
           <v-spacer></v-spacer>

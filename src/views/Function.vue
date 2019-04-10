@@ -1,8 +1,8 @@
 <template>
     <v-layout row wrap>
         <Logout/>
-        <v-flex xs12>
-            <v-card >
+        <v-flex xs12 style="padding:5px">
+            <v-card hover>
                 <v-card-title>
                     <h2>Customize</h2>
                     <v-spacer></v-spacer>
@@ -29,8 +29,8 @@
                 </v-card-text>
             </v-card>
         </v-flex>
-        <v-flex d-flex>
-            <v-card min-width="640">
+        <v-flex d-flex style="padding:5px">
+            <v-card min-width="640" hover>
                 <v-card-title>
                     <h2>Default Model Setting</h2>
                      <v-spacer></v-spacer>
@@ -78,8 +78,8 @@
                 </v-card-text>
             </v-card>
         </v-flex>
-        <v-flex d-flex>
-            <v-card min-width="640" min-height="470">
+        <v-flex d-flex style="padding:5px">
+            <v-card min-width="640" min-height="470" hover>
                 <v-card-title>
                     <h2>Custom Model Setting</h2>
                     <v-spacer></v-spacer>
