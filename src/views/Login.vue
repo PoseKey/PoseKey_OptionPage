@@ -1,11 +1,11 @@
 <template>
     <v-layout row wrap>
-        <v-flex>
-        <v-card>
+        <v-flex d-flex style="padding:5px">
+        <v-card hover>
             <canvas id="output" width="640" height="480"></canvas>
         </v-card>
         </v-flex>
-        <v-flex d-flex>
+        <v-flex d-flex style="padding:5px">
         <LoginCard/>
         </v-flex>
     </v-layout>

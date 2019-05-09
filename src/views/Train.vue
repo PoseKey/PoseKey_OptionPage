@@ -13,14 +13,15 @@
                         <span>
                             Make sure you are well taken on the Mirror tab!
                             <br>
-                            The upper body including the face and arms should be seen. Please look at the screen and move to the proper distance.
+                            The upper body including the face and arms should be seen. Please look at the screen and move to the proper distance.<br>
+                            **If mirror doesn't work properly, go to other tab and return back to this page.**
                         </span>
                     </v-tooltip>
                 </v-card-title>
                 <v-divider></v-divider>
-                <v-card-responsive>
+                <v-card-text>
                     <canvas id="output" width="640" height="480"></canvas>
-                </v-card-responsive>
+                </v-card-text>
             </v-card>
         </v-flex>
         <v-flex d-flex style="padding:5px">
@@ -136,7 +137,9 @@ export default {
             details: [],
             // custom:false,//false
             step: 1,
-            local: 1//false
+            local: 1,   //false
+            sc: 0.5,
+            pm: 1.0,
         }
     },
     methods: {
@@ -233,19 +236,19 @@ export default {
             }
         );
         //loading canvas & model
-        chrome.runtime.sendMessage(
-            {
-                data:"login",
-                uidm: uid
-            },
-            (response) => {
-                console.log(response);
-                if (response.localm == 0) this.local = 0;
-                else this.local = 1;
-                // console.log(local);
-                // setup(this.local);
-            }
-        );
+        // chrome.runtime.sendMessage(
+        //     {
+        //         data:"login",
+        //         uidm: uid
+        //     },
+        //     (response) => {
+        //         console.log(response);
+        //         if (response.localm == 0) this.local = 0;
+        //         else this.local = 1;
+        //         // console.log(local);
+        //         // setup(this.local);
+        //     }
+        // );
 
         //setup
         try{
@@ -256,18 +259,38 @@ export default {
         }
         canvas = document.getElementById('output');
         ctx = canvas.getContext('2d');
-        net = await posenet.load(1.01);
         knn = knnClassifier.create();
         mobilenet = await mobilenetModule.load();
         if(this.local == 1) await loadMyModel(uid);
         else await loadModel();
-        detectPose(video,net);
-
         for(let i=0; i<6; i++){
             const count = knn.getClassExampleCount();
             this.customd[i].count = count[i];
         }
-
+        db.collection('users').doc(uid).collection('model').doc('setting').get().then(
+            async (data)=>{
+                if(data.exists){
+                    switch(data.data().pm){
+                        case 0:
+                            this.pm = 0.5;
+                            break;
+                        case 1:
+                            this.pm = 0.75;
+                            break;
+                        case 2:
+                            this.pm = 1.0;
+                            break;
+                        default:
+                            this.pm = 1.01;
+                    }
+                    this.sc = data.data().sc;
+                    // console.log(this.sc, this.pm);
+                }
+                
+                net = await posenet.load(this.pm);
+                detectPose(video, net, this.sc);
+            }
+        );
     },
     beforeDestroy(){
         net.dispose();
@@ -311,9 +334,10 @@ async function loadVideo(){
     return video;
 }
 
-function detectPose(video,net){
+function detectPose(video, net, imageScale){
+    // console.log(imageScale);
     async function detect(){
-        const pose = await net.estimateSinglePose(video,0.3,true,16);
+        const pose = await net.estimateSinglePose(video,imageScale,true,16);
         ctx.clearRect(0,0,width,height);
         ctx.save();
         ctx.scale(-1, 1);
@@ -321,8 +345,8 @@ function detectPose(video,net){
         ctx.drawImage(video,0,0,width,height);
         ctx.restore();
         if (pose.score >= 0.1) {
-            utils.drawKeypoints(pose.keypoints, 0.3, ctx);
-            utils.drawSkeleton(pose.keypoints, 0.3, ctx);
+            utils.drawKeypoints(pose.keypoints, 0.5, ctx);
+            utils.drawSkeleton(pose.keypoints, 0.5, ctx);
         }
         const image = tf.browser.fromPixels(canvas);
         tf.disableDeprecationWarnings();

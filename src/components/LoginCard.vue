@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-card hover>
         <v-card-title>
             <h2>Please Sign in to Proceed</h2>
         </v-card-title>
