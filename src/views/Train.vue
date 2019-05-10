@@ -303,23 +303,6 @@ export default {
     }
 }
 
-// async function setup(loc){
-//     try{
-//         video = await loadVideo();
-//     }
-//     catch(e){
-//         throw e;
-//     }
-//     canvas = document.getElementById('output');
-//     ctx = canvas.getContext('2d');
-//     net = await posenet.load(1.01);
-//     knn = knnClassifier.create();
-//     mobilenet = await mobilenetModule.load();
-//     if(loc == 1) await loadMyModel(uid);
-//     else await loadModel();
-//     detectPose(video,net);
-// }
-
 async function loadVideo(){
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     throw new Error(
@@ -342,7 +325,7 @@ function detectPose(video, net, imageScale){
         ctx.save();
         ctx.scale(-1, 1);
         ctx.translate(-width, 0);
-        ctx.drawImage(video,0,0,width,height);
+        // ctx.drawImage(video,0,0,width,height);
         ctx.restore();
         if (pose.score >= 0.1) {
             utils.drawKeypoints(pose.keypoints, 0.5, ctx);
