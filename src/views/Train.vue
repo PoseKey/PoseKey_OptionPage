@@ -14,13 +14,13 @@
                             Make sure you are well taken on the Mirror tab!
                             <br>
                             The upper body including the face and arms should be seen. Please look at the screen and move to the proper distance.<br>
-                            **If mirror doesn't work properly, go to other tab and return back to this page.**
                         </span>
                     </v-tooltip>
                 </v-card-title>
                 <v-divider></v-divider>
                 <v-card-text>
                     <canvas id="output" width="640" height="480"></canvas>
+                    <!-- <canvas id="skeleton" width="640" height="480" hidden></canvas> -->
                 </v-card-text>
             </v-card>
         </v-flex>
@@ -41,7 +41,7 @@
                     Please train the model until the Example Count reaches more than 100<br>
                     Be aware that training with a pose that is similar to other poses will result in lower recognition rates.<br>
                     You must press 'SAVE' to complete the learning process and save the model.<br>
-                    You also can press 'RESET' to erase your model and copy the default model.
+                    You also can press 'RESET' to erase your model and copy the default model.<br>
                 </span>
             </v-tooltip>
         </v-card-title>
@@ -123,6 +123,8 @@ let stream;
 let canvas;
 let ctx;
 
+let canvasForTrain;
+let ctx2;
 let myIncomingClassifier = [];
 let myGroups = [];
 let training = -1;
@@ -242,7 +244,7 @@ export default {
                 uidm: uid
             },
             (response) => {
-                console.log(response);
+                // console.log(response);
                 if (response.localm == 0) this.local = 0;
                 else this.local = 1;
                 // console.log(local);
@@ -251,12 +253,18 @@ export default {
         );
 
         //setup
+        tf.disableDeprecationWarnings();
         try{
             video = await loadVideo();
         }
         catch(e){
             throw e;
         }
+        canvasForTrain = document.createElement('canvas');
+        canvasForTrain.height = height;
+        canvasForTrain.width = width;
+        ctx2 = canvasForTrain.getContext('2d');
+
         canvas = document.getElementById('output');
         ctx = canvas.getContext('2d');
         knn = knnClassifier.create();
@@ -286,7 +294,6 @@ export default {
                     this.sc = data.data().sc;
                     // console.log(this.sc, this.pm);
                 }
-                
                 net = await posenet.load(this.pm);
                 detectPose(video, net, this.sc);
             }
@@ -325,14 +332,19 @@ function detectPose(video, net, imageScale){
         ctx.save();
         ctx.scale(-1, 1);
         ctx.translate(-width, 0);
-        // ctx.drawImage(video,0,0,width,height);
+        ctx.drawImage(video,0,0,width,height);
         ctx.restore();
+
+        ctx2.clearRect(0,0,width,height);
+
         if (pose.score >= 0.1) {
             utils.drawKeypoints(pose.keypoints, 0.5, ctx);
             utils.drawSkeleton(pose.keypoints, 0.5, ctx);
+            
+            utils.drawKeypoints(pose.keypoints, 0.5, ctx2);
+            utils.drawSkeleton(pose.keypoints, 0.5, ctx2);
         }
-        const image = tf.browser.fromPixels(canvas);
-        tf.disableDeprecationWarnings();
+        const image = tf.browser.fromPixels(canvasForTrain);
         let logits;
         const infer = () => mobilenet.infer(image, 'conv_preds');
         if (training != -1) {

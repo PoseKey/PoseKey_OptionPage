@@ -2,7 +2,7 @@
     <v-layout row wrap>
         <v-flex d-flex style="padding:5px">
         <v-card hover>
-            <canvas id="output" width="640" height="480"></canvas>
+            <canvas id="video" width="640" height="480"></canvas>
         </v-card>
         </v-flex>
         <v-flex d-flex style="padding:5px">
@@ -31,8 +31,8 @@ export default {
         catch (e){
             throw e;
         }
-        canvas = document.getElementById('output');
-        ctx = canvas.getContext('2d');
+        canvas = document.getElementById('video');
+        if(canvas!=null) ctx = canvas.getContext('2d');
         detectPose(video);
 
         chrome.runtime.sendMessage(
@@ -42,6 +42,7 @@ export default {
         );
     },
     destroyed(){
+        // console.log("disposed");
         if(net) net.dispose();
         video.pause();
         video.srcObject = null;
