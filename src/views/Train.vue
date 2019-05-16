@@ -284,19 +284,19 @@ export default {
             }
         );
         //loading canvas & model
-        // chrome.runtime.sendMessage(
-        //     {
-        //         data:"login",
-        //         uidm: uid
-        //     },
-        //     (response) => {
-        //         // console.log(response);
-        //         if (response.localm == 0) this.local = 0;
-        //         else this.local = 1;
-        //         // console.log(local);
-        //         // setup(this.local);
-        //     }
-        // );
+        chrome.runtime.sendMessage(
+            {
+                data:"login",
+                uidm: uid
+            },
+            (response) => {
+                // console.log(response);
+                if (response.localm == 0) this.local = 0;
+                else this.local = 1;
+                // console.log(local);
+                // setup(this.local);
+            }
+        );
 
         //setup
         tf.disableDeprecationWarnings();
