@@ -317,9 +317,8 @@ export default {
         mobilenet = await mobilenetModule.load();
         if(this.local == 1) await loadMyModel(uid);
         else await loadModel();
-        for(let i=0; i<6; i++){
-            const count = knn.getClassExampleCount();
-            this.customd[i].count = count[i];
+        for(let i=1; i<7; i++){
+            this.updateCount(i);
         }
         db.collection('users').doc(uid).collection('model').doc('setting').get().then(
             async (data)=>{
