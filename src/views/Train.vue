@@ -65,7 +65,7 @@
           </v-window-item>
           <v-window-item :value="1">
             <br>
-            <v-card-text><span>Your pose: {{curr}}</span></v-card-text>
+            <v-card-text><span style="font-size:20pt">{{curr}}</span></v-card-text>
             <v-list subheader>
               <!-- <v-subheader><strong class="primary--text">Customize model</strong></v-subheader> -->
               
@@ -83,8 +83,8 @@
                   </v-form>
                 </v-list-tile-content>
                 <span color="secondary">Example Count: {{item.count}}</span>
-                <v-btn flat color="accent" @click="(event) => { clearClass(event, item.id-1) }">Clear</v-btn>
-                <v-btn flat color="secondary" @mousedown="(event) => {trainClass(event, item.id-1)}" @mouseup="(event) => {trainClass(event, -1);updateCount(item.id-1);}">Train</v-btn>
+                <v-btn flat color="accent" @click="(event) => { clearClass(event, item.id) }">Clear</v-btn>
+                <v-btn flat color="secondary" @mousedown="(event) => {trainClass(event, item.id)}" @mouseup="(event) => {trainClass(event, -1);updateCount(item.id);}">Train</v-btn>
               </v-list-tile>
             </v-list>
             <v-card-actions style="justify-content:flex-end">
@@ -150,7 +150,7 @@ export default {
         clearClass (event, index) {
             // console.log("clear" + index);
             knn.clearClass(index);
-            this.customd[index].count = 0;
+            this.customd[index - 1].count = 0;
         },
         trainClass (event, index) {
             // console.log("train" + index);
@@ -158,8 +158,9 @@ export default {
         },
         updateCount (index) {
             const exampleCount = knn.getClassExampleCount();
-            this.customd[index].count = exampleCount[index];
-            console.log(this.customd[index].count);
+            console.log(index);
+            this.customd[index - 1].count = exampleCount[index];
+            // console.log(this.customd[index].count);
         },
         save () {
             let db = this.$db.requireDB();
@@ -181,7 +182,7 @@ export default {
             knn = knnClassifier.create();
             await loadModel();
             await saveModel(uid);
-            for(let i=0; i<6; i++){
+            for(let i=1; i<7; i++){
                 this.updateCount(i);
             }
             db.collection('users').doc(uid).collection('model').doc('map').update({
@@ -226,7 +227,7 @@ export default {
                 logits = infer();
                 knn.addExample(logits, training);
                 const exampleCount = knn.getClassExampleCount();
-                // console.log(exampleCount[training]);
+                // console.log(training, exampleCount[training]);
             }
             image.dispose();
             if (logits != null) {
@@ -283,19 +284,19 @@ export default {
             }
         );
         //loading canvas & model
-        chrome.runtime.sendMessage(
-            {
-                data:"login",
-                uidm: uid
-            },
-            (response) => {
-                // console.log(response);
-                if (response.localm == 0) this.local = 0;
-                else this.local = 1;
-                // console.log(local);
-                // setup(this.local);
-            }
-        );
+        // chrome.runtime.sendMessage(
+        //     {
+        //         data:"login",
+        //         uidm: uid
+        //     },
+        //     (response) => {
+        //         // console.log(response);
+        //         if (response.localm == 0) this.local = 0;
+        //         else this.local = 1;
+        //         // console.log(local);
+        //         // setup(this.local);
+        //     }
+        // );
 
         //setup
         tf.disableDeprecationWarnings();
