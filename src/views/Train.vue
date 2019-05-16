@@ -65,6 +65,7 @@
           </v-window-item>
           <v-window-item :value="1">
             <br>
+            <v-card-text><span>Your pose: {{curr}}</span></v-card-text>
             <v-list subheader>
               <!-- <v-subheader><strong class="primary--text">Customize model</strong></v-subheader> -->
               
@@ -142,6 +143,7 @@ export default {
             local: 1,   //false
             sc: 0.5,
             pm: 1.0,
+            curr: "",
         }
     },
     methods: {
@@ -189,6 +191,49 @@ export default {
         createModel(){
             this.local = 1;
         },
+        async detectPose(){
+            // console.log(imageScale);
+            const pose = await net.estimateSinglePose(video,this.sc,true,16);
+            ctx.clearRect(0,0,width,height);
+            ctx.save();
+            ctx.scale(-1, 1);
+            ctx.translate(-width, 0);
+            ctx.drawImage(video,0,0,width,height);
+            ctx.restore();
+
+            ctx2.clearRect(0,0,width,height);
+
+            if (pose.score >= 0.1) {
+                utils.drawKeypoints(pose.keypoints, 0.5, ctx);
+                utils.drawSkeleton(pose.keypoints, 0.5, ctx);
+                
+                utils.drawKeypoints(pose.keypoints, 0.5, ctx2);
+                utils.drawSkeleton(pose.keypoints, 0.5, ctx2);
+            }
+            const image = tf.browser.fromPixels(canvasForTrain);
+            let logits;
+            const infer = () => mobilenet.infer(image, 'conv_preds');
+            const numClasses = knn.getNumClasses();
+            if(numClasses>0){
+                logits = infer();
+                const res = await knn.predictClass(logits,10);
+                // console.log(this.customd);
+                // console.log(res);
+                if(res.classIndex>=1 && res.classIndex<=6)this.curr = this.customd[res.classIndex - 1].Description + ": " + res.confidences[res.classIndex]*100 + "%";
+                else this.curr = "Idle: " + res.confidences[res.classIndex]*100 + "%";
+            }
+            if (training != -1) {
+                logits = infer();
+                knn.addExample(logits, training);
+                const exampleCount = knn.getClassExampleCount();
+                // console.log(exampleCount[training]);
+            }
+            image.dispose();
+            if (logits != null) {
+                logits.dispose();
+            }
+            requestAnimationFrame(this.detectPose);
+        }
     },
     async mounted(){
         //loading database
@@ -295,7 +340,7 @@ export default {
                     // console.log(this.sc, this.pm);
                 }
                 net = await posenet.load(this.pm);
-                detectPose(video, net, this.sc);
+                this.detectPose();
             }
         );
     },
@@ -323,45 +368,6 @@ async function loadVideo(){
     video.play();
     return video;
 }
-
-function detectPose(video, net, imageScale){
-    // console.log(imageScale);
-    async function detect(){
-        const pose = await net.estimateSinglePose(video,imageScale,true,16);
-        ctx.clearRect(0,0,width,height);
-        ctx.save();
-        ctx.scale(-1, 1);
-        ctx.translate(-width, 0);
-        ctx.drawImage(video,0,0,width,height);
-        ctx.restore();
-
-        ctx2.clearRect(0,0,width,height);
-
-        if (pose.score >= 0.1) {
-            utils.drawKeypoints(pose.keypoints, 0.5, ctx);
-            utils.drawSkeleton(pose.keypoints, 0.5, ctx);
-            
-            utils.drawKeypoints(pose.keypoints, 0.5, ctx2);
-            utils.drawSkeleton(pose.keypoints, 0.5, ctx2);
-        }
-        const image = tf.browser.fromPixels(canvasForTrain);
-        let logits;
-        const infer = () => mobilenet.infer(image, 'conv_preds');
-        if (training != -1) {
-            logits = infer();
-            knn.addExample(logits, training);
-            const exampleCount = knn.getClassExampleCount();
-            // console.log(exampleCount[training]);
-        }
-        image.dispose();
-        if (logits != null) {
-            logits.dispose();
-        }
-        requestAnimationFrame(detect);
-    }
-    detect();
-}
-
 //save and load model
 async function defineClassifierModel(myPassedClassifier){
     let myLayerList = [];
@@ -383,7 +389,7 @@ async function defineClassifierModel(myPassedClassifier){
 
     const myClassifierModel = tf.model({inputs: myLayerList[1], outputs: myConcatenate1Dense4});                                                         
     myClassifierModel.summary();
-    myPassedClassifier.getClassifierDataset()[0].print(true);
+    // myPassedClassifier.getClassifierDataset()[0].print(true);
 
     for (let myClassifierLoop = 0; myClassifierLoop < myMaxClasses; myClassifierLoop++ ){
         const myInWeight = await myPassedClassifier.getClassifierDataset()[myClassifierLoop];
