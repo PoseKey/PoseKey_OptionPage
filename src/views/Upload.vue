@@ -159,6 +159,12 @@ export default {
                 aws: true
             });
             this.success = true;
+            chrome.runtime.sendMessage(
+                {
+                    data:"saveModel",
+                    uidm: uid
+                }
+            );
         }
     }
 }
