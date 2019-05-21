@@ -154,6 +154,7 @@ export default {
                 Key: 'user/' + uid + '/' + files[1].name,
                 Body: files[1]
             }, (err,data)=>console.log(err, data));
+            this.$refs.myVueDropzone.removeAllFiles(true);
             db.collection('users').doc(uid).collection('model').doc('map').update({
                 aws: true
             });
