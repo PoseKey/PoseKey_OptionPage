@@ -47,7 +47,7 @@
         </v-card-title>
         <v-divider></v-divider>
         <v-window v-model="aws">
-          <v-window-item :value="0">
+          <v-window-item :value="false">
             <v-card-text>
               PoseKey encourages users to use Posekey in creative ways!<br>
               Therefore users can change default poses into their own unique poses by using a custom AI model.<br>
@@ -63,7 +63,7 @@
               <v-switch v-model="toggle"></v-switch>
             </v-card-actions> -->
           </v-window-item>
-          <v-window-item :value="1">
+          <v-window-item :value="true">
             <br>
             <v-card-text><span style="font-size:20pt">{{curr}}</span></v-card-text>
             <v-list subheader>
@@ -194,7 +194,7 @@ export default {
             myClassifierModel2.save('downloads://model');
         },
         createModel(){
-            this.aws = 1;
+            this.aws = true;
         },
         async detectPose(){
             // console.log(imageScale);
