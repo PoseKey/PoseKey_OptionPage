@@ -22,7 +22,7 @@
                     There are certain rules to be beware!<br>
                     1. Your file name should be 'model.json' and 'model.weights.bin'.<br>
                     2. Your previous models will be overwritten and unrecoverable. <br>
-                    3. You can create a model in the Train tab.
+                    3. You can create a model in the <a href="/">Train tab.</a>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
