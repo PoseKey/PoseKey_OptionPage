@@ -46,7 +46,7 @@
             </v-tooltip>
         </v-card-title>
         <v-divider></v-divider>
-        <v-window v-model="local">
+        <v-window v-model="aws">
           <v-window-item :value="0">
             <v-card-text>
               PoseKey encourages users to use Posekey in creative ways!<br>
@@ -129,7 +129,6 @@ let ctx2;
 let myIncomingClassifier = [];
 let myGroups = [];
 let training = -1;
-
 export default {
     components:{
         Logout
@@ -140,10 +139,10 @@ export default {
             details: [],
             // custom:false,//false
             step: 1,
-            local: 1,   //false
             sc: 0.5,
             pm: 1.0,
             curr: "",
+            aws: false,
         }
     },
     methods: {
@@ -165,23 +164,24 @@ export default {
         save () {
             let db = this.$db.requireDB();
             let uid = store.state.user.uid;
-            saveModel(uid);
+            this.saveModel(uid);
             db.collection('users').doc(uid).collection('model').doc('map').update({
                 customd: this.customd
             });
-            chrome.runtime.sendMessage(
-                {
-                    data:"saveModel",
-                    uidm: uid
-                }
-            );
+            // chrome.runtime.sendMessage(
+            //     {
+            //         data:"saveModel",
+            //         uidm: uid
+            //     }
+            // );
         },
         async reset () {
             let db = this.$db.requireDB();
             let uid = store.state.user.uid;
+            knn.dispose();
             knn = knnClassifier.create();
             await loadModel();
-            await saveModel(uid);
+            // await this.saveModel(uid);
             for(let i=1; i<7; i++){
                 this.updateCount(i);
             }
@@ -189,8 +189,12 @@ export default {
                     customd: this.customd
             });
         },
+        async saveModel(uid){
+            const myClassifierModel2 = await defineClassifierModel(knn);
+            myClassifierModel2.save('downloads://model');
+        },
         createModel(){
-            this.local = 1;
+            this.aws = 1;
         },
         async detectPose(){
             // console.log(imageScale);
@@ -244,6 +248,7 @@ export default {
             (doc)=>{
                 if(doc.exists){
                     this.customd = doc.data().customd;
+                    this.aws = doc.data().aws;
                 }
                 else{
                     db.collection('users').doc(uid).collection('model').doc('map').set({
@@ -258,6 +263,7 @@ export default {
                             {Description:"Pose 5", id: 5, count: 0},
                             {Description:"Pose 6", id: 6, count: 0}
                         ],
+                        aws:false
                     });
                     this.customd = [
                         {Description:"Pose 1", id: 1, count: 0},
@@ -267,6 +273,7 @@ export default {
                         {Description:"Pose 5", id: 5, count: 0},
                         {Description:"Pose 6", id: 6, count: 0}
                     ];
+                    this.aws = false;
                 }
             }
         );
@@ -284,19 +291,20 @@ export default {
             }
         );
         //loading canvas & model
-        chrome.runtime.sendMessage(
-            {
-                data:"login",
-                uidm: uid
-            },
-            (response) => {
-                // console.log(response);
-                if (response.localm == 0) this.local = 0;
-                else this.local = 1;
-                // console.log(local);
-                // setup(this.local);
-            }
-        );
+        // chrome.runtime.sendMessage(
+        //     {
+        //         data:"login",
+        //         uidm: uid
+        //     },
+        //     (response) => {
+        //         // console.log(response);
+        //         if (response.localm == 0) this.local = 0;
+        //         else this.local = 1;
+        //         // console.log(local);
+        //         // setup(this.local);
+        //     }
+        // );
+
 
         //setup
         tf.disableDeprecationWarnings();
@@ -315,7 +323,7 @@ export default {
         ctx = canvas.getContext('2d');
         knn = knnClassifier.create();
         mobilenet = await mobilenetModule.load();
-        if(this.local == 1) await loadMyModel(uid);
+        if(this.aws == 1) await loadMyModel(uid);
         else await loadModel();
         for(let i=1; i<7; i++){
             this.updateCount(i);
@@ -398,11 +406,6 @@ async function defineClassifierModel(myPassedClassifier){
     return myClassifierModel;
 }
 
-async function saveModel(uid){
-    const myClassifierModel2 = await defineClassifierModel(knn);
-    myClassifierModel2.save('indexeddb://'+ uid);
-    // console.log('Classifier saved');
-}
 
 async function loadModel(){
     const myLoadedModel  = await tf.loadLayersModel('https://ujoy7851.github.io/Capstone/model/model.json');
@@ -422,7 +425,7 @@ async function loadModel(){
 }
   
 async function loadMyModel(uid){
-    const myLoadedModel  = await tf.loadLayersModel('indexeddb://' + uid);
+    const myLoadedModel  = await tf.loadLayersModel('https://s3.ap-northeast-2.amazonaws.com/ai-models/user/' + uid + '/model.json');
     // const myLoadedModel  = await tf.loadModel('indexeddb://' + uid);
 
     const myMaxLayers = myLoadedModel.layers.length;

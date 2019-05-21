@@ -25,6 +25,9 @@
         <v-tab to="/setting">
           Settings
         </v-tab>
+        <v-tab to="/upload">
+          Upload
+        </v-tab>
       </v-tabs>
     </v-toolbar>
 

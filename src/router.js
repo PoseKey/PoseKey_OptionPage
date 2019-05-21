@@ -5,6 +5,7 @@ import Train from './views/Train.vue'
 import Login from './views/Login.vue'
 import Functions from './views/Function.vue'
 import Setting from './views/Setting.vue'
+import Upload from './views/Upload.vue'
 
 import store from './store'
 
@@ -37,6 +38,14 @@ const router = new Router({
       path: '/setting',
       name: 'setting',
       component: Setting,
+      meta: {
+        authRequired: true
+      }
+    },
+    {
+      path: '/upload',
+      name: 'upload',
+      component: Upload,
       meta: {
         authRequired: true
       }

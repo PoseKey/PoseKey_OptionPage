@@ -357,7 +357,7 @@ export default {
                 uidm: uid
             },
             (response)=>{
-                console.log(response);
+                // console.log(response);
                 this.local = response.localm;
                 this.custom = response.customm;
             }
