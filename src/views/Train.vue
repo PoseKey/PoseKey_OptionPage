@@ -400,7 +400,7 @@ async function defineClassifierModel(myPassedClassifier){
 
 
 async function loadModel(){
-    const myLoadedModel  = await tf.loadLayersModel('https://ujoy7851.github.io/Capstone/model/model.json');
+    const myLoadedModel  = await tf.loadLayersModel('https://s3.ap-northeast-2.amazonaws.com/ai-models/model.json');
     // const myLoadedModel  = await tf.loadModel('https://ujoy7851.github.io/Capstone/model/model.json');
     // const myLoadedModel  = await tf.loadModel('indexeddb://model');
 
